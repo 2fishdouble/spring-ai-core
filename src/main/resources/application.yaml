@@ -1,3 +1,24 @@
 spring:
+  profiles:
+    active:
+      - dev
   application:
     name: spring-ai-core
+  ai:
+    mcp:
+      client:
+        enabled: false
+        initialized: true
+        name: spring-ai-core-mcp-client
+        version: 1.0.0
+        type: SYNC
+        request-timeout: 20s
+        root-change-notification: true
+        streamable-http:
+          connections:
+            mcp-server:
+              url: http://localhost:8080/mcp
+        toolcallback:
+          enabled: true
+server:
+  port: 8081
