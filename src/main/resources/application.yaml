@@ -5,9 +5,15 @@ spring:
   application:
     name: spring-ai-core
   ai:
+    openai:
+      base-url: https://api.deepseek.com
+      api-key: sk-29c3610fa2c74c39a62c644434e8a177
+      chat:
+        temperature: 0.0
+        model: deepseek-v4-flash
     mcp:
       client:
-        enabled: false
+        enabled: true
         initialized: true
         name: spring-ai-core-mcp-client
         version: 1.0.0
