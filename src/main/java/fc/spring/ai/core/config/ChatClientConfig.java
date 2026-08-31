@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 
 @Configuration
@@ -50,6 +51,17 @@ public class ChatClientConfig {
         return builder
                 .defaultSystem("你是一个专业、严谨且通俗易懂的智能业务助手。")
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(jdbcChatMemory).build())
+                .build();
+    }
+
+    @Bean("jdbcToolChatClient")
+    public ChatClient jbdcToolChatClient(ChatClient.Builder builder,
+                                         ChatMemory jdbcChatMemory,
+                                         LocalOrderService localOrderService) {
+        return builder
+                .defaultSystem("你是一个专业、严谨且通俗易懂的智能业务助手。")
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(jdbcChatMemory).build())
+                .defaultTools(List.of(localOrderService))
                 .build();
     }
 }

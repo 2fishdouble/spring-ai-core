@@ -19,16 +19,19 @@ public class TestController {
     private final BusinessMcpService businessMcpService;
     private final ChatClient normalChatClient;
     private final ChatClient jdbcChatClient;
+    private final ChatClient jdbcToolChatClient;
 
     public TestController(
             BusinessMcpService businessMcpService,
             @Qualifier("normalChatClient") ChatClient normalChatClient,
-            @Qualifier("jdbcChatClient") ChatClient jdbcChatClient
+            @Qualifier("jdbcChatClient") ChatClient jdbcChatClient,
+            @Qualifier("jdbcToolChatClient") ChatClient jdbcToolChatClient
+
     ) {
         this.businessMcpService = businessMcpService;
         this.normalChatClient = normalChatClient;
         this.jdbcChatClient = jdbcChatClient;
-
+        this.jdbcToolChatClient = jdbcToolChatClient;
     }
 
     @GetMapping("/callAddToolDirectly")
@@ -47,6 +50,15 @@ public class TestController {
     @GetMapping(value = "/chat/memory/flux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> chatMemoryFlux(@RequestParam String chatId, @RequestParam String message) {
         return jdbcChatClient.prompt()
+                .user(message)
+                .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, chatId))
+                .stream()
+                .content();
+    }
+
+    @GetMapping(value = "/chat/memory/tool/flux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> chatMemoryToolFlux(@RequestParam String chatId, @RequestParam String message) {
+        return jdbcToolChatClient.prompt()
                 .user(message)
                 .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, chatId))
                 .stream()
