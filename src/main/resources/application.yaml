@@ -57,7 +57,7 @@ spring:
           enabled: true
     openai:
       base-url: https://api.deepseek.com
-      api-key: sk-29c3610fa2c74c39a62c644434e8a177
+      api-key: sk-faf17e79516c487f93756523d7c6020f
       chat:
         temperature: 0.0
         model: deepseek-v4-flash
@@ -78,3 +78,6 @@ spring:
           enabled: true
 server:
   port: 8081
+logging:
+  level:
+    org.springframework.ai: DEBUG
