@@ -1,4 +1,4 @@
-package fc.spring.ai.core.config;
+package fc.spring.ai.core.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

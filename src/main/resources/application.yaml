@@ -47,6 +47,16 @@ spring:
   application:
     name: spring-ai-core
   ai:
+    tools:
+      throw-exception-on-error: true
+      observations:
+        include-content: true
+      resolution:
+        fallback:
+          enabled: false
+      limits:
+        on-limit-exceeded: throw
+        max-calls-per-tool-default: 40
     chat:
       client:
         enabled: true

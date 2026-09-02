@@ -1,5 +1,7 @@
 package fc.spring.ai.core.config;
 
+import fc.spring.ai.core.tool.LocalLogisticsService;
+import fc.spring.ai.core.tool.LocalOrderService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -57,11 +59,13 @@ public class ChatClientConfig {
     @Bean("jdbcToolChatClient")
     public ChatClient jbdcToolChatClient(ChatClient.Builder builder,
                                          ChatMemory jdbcChatMemory,
-                                         LocalOrderService localOrderService) {
+                                         LocalOrderService localOrderService,
+                                         LocalLogisticsService localLogisticsService
+                                         ) {
         return builder
                 .defaultSystem("你是一个专业、严谨且通俗易懂的智能业务助手。")
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(jdbcChatMemory).build())
-                .defaultTools(List.of(localOrderService))
+                .defaultTools(List.of(localOrderService, localLogisticsService))
                 .build();
     }
 }
