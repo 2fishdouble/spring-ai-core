@@ -81,6 +81,9 @@ spring:
       chat:
         temperature: 0.0
         model: deepseek-v4-flash
+    # embedding 提供方选为 local：使用项目内置的本地哈希向量化，不调用任何外部 Embedding API
+    model:
+      embedding: local
     mcp:
       client:
         enabled: false

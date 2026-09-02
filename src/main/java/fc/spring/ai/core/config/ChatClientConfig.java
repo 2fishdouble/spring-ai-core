@@ -7,6 +7,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.toolsearch.ToolSearchToolCallingAdvisor;
 import org.springframework.ai.chat.client.advisor.toolsearch.autoconfigure.ToolSearchAdvisorAutoConfiguration;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
@@ -14,6 +15,8 @@ import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryReposito
 import org.springframework.ai.model.chat.client.autoconfigure.ChatClientAutoConfiguration;
 import org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -84,6 +87,29 @@ public class ChatClientConfig {
                         localOrderService,
                         localSystemService
                 ))
+                .build();
+    }
+
+    /**
+     * embedding + vector store 的 RAG ChatClient：
+     * 命中向量库的相似文档后交给模型回答，同时叠加 JDBC 聊天记忆以支持多轮追问。
+     */
+    @Bean("vectorRagChatClient")
+    public ChatClient vectorRagChatClient(ChatClient.Builder builder,
+                                          VectorStore vectorStore,
+                                          ChatMemory jdbcChatMemory) {
+        return builder
+                .defaultSystem("你是一个专业、严谨且通俗易懂的智能业务助手。回答时请优先依据提供的资料上下文；"
+                        + "若资料中找不到相关信息，请如实说明，不要编造。")
+                .defaultAdvisors(
+                        MessageChatMemoryAdvisor.builder(jdbcChatMemory).build(),
+                        QuestionAnswerAdvisor.builder(vectorStore)
+                                .searchRequest(SearchRequest.builder()
+                                        .similarityThreshold(0.2)
+                                        .topK(5)
+                                        .build())
+                                .build()
+                )
                 .build();
     }
 }
