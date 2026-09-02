@@ -11,6 +11,8 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepositoryDialect;
+import org.springframework.ai.model.chat.client.autoconfigure.ChatClientAutoConfiguration;
+import org.springframework.ai.model.tool.autoconfigure.ToolCallingAutoConfiguration;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,7 +63,9 @@ public class ChatClientConfig {
     }
 
     /**
+     * @see ToolCallingAutoConfiguration
      * @see ToolSearchAdvisorAutoConfiguration
+     * @see ChatClientAutoConfiguration
      */
     @Bean("jdbcToolChatClient")
     public ChatClient jbdcToolChatClient(ChatClient.Builder builder,
