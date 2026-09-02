@@ -2,12 +2,16 @@ package fc.spring.ai.core.config;
 
 import fc.spring.ai.core.tool.LocalLogisticsService;
 import fc.spring.ai.core.tool.LocalOrderService;
+import fc.spring.ai.core.tool.LocalSystemService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.toolsearch.ToolSearchToolCallingAdvisor;
+import org.springframework.ai.chat.client.advisor.toolsearch.autoconfigure.ToolSearchAdvisorAutoConfiguration;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepository;
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepositoryDialect;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -56,16 +60,26 @@ public class ChatClientConfig {
                 .build();
     }
 
+    /**
+     * @see ToolSearchAdvisorAutoConfiguration
+     */
     @Bean("jdbcToolChatClient")
     public ChatClient jbdcToolChatClient(ChatClient.Builder builder,
                                          ChatMemory jdbcChatMemory,
+                                         LocalLogisticsService localLogisticsService,
                                          LocalOrderService localOrderService,
-                                         LocalLogisticsService localLogisticsService
+                                         LocalSystemService localSystemService
                                          ) {
         return builder
                 .defaultSystem("你是一个专业、严谨且通俗易懂的智能业务助手。")
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(jdbcChatMemory).build())
-                .defaultTools(List.of(localOrderService, localLogisticsService))
+                .defaultAdvisors(
+                        MessageChatMemoryAdvisor.builder(jdbcChatMemory).build()
+                )
+                .defaultTools(List.of(
+                        localLogisticsService,
+                        localOrderService,
+                        localSystemService
+                ))
                 .build();
     }
 }

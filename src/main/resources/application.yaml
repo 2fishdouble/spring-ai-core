@@ -59,6 +59,16 @@ spring:
         max-calls-per-tool-default: 40
     chat:
       client:
+        tool-search-advisor:
+          enabled: true
+          tool-index-type: regex
+          max-results: 5
+          session-id-key-name: chat_memory_conversation_id
+          reference-tool-name-accumulation: true
+          lucene:
+            min-score-threshold: 0.25
+          eviction:
+            lru-max-sessions: 1000
         enabled: true
         observations:
           log-completion: true
